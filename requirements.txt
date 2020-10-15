@@ -1,0 +1,4 @@
+###### Requirements with Version Specifiers ######`
+django==2.2.3
+psycopg2==2.8.5
+pandas==1.0.3

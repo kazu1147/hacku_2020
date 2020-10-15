@@ -1,0 +1,14 @@
+FATAL:  lock file "postmaster.pid" already exists
+HINT:  Is another postmaster (PID 26804) running in data directory "C:/Users/minih/anaconda3/envs/optfit/data"?
+FATAL:  lock file "postmaster.pid" already exists
+HINT:  Is another postmaster (PID 26804) running in data directory "C:/Users/minih/anaconda3/envs/optfit/data"?
+FATAL:  lock file "postmaster.pid" already exists
+HINT:  Is another postmaster (PID 26804) running in data directory "C:/Users/minih/anaconda3/envs/optfit/data"?
+FATAL:  lock file "postmaster.pid" already exists
+HINT:  Is another postmaster (PID 26804) running in data directory "C:/Users/minih/anaconda3/envs/optfit/data"?
+FATAL:  lock file "postmaster.pid" already exists
+HINT:  Is another postmaster (PID 26804) running in data directory "C:/Users/minih/anaconda3/envs/optfit/data"?
+FATAL:  lock file "postmaster.pid" already exists
+HINT:  Is another postmaster (PID 43276) running in data directory "C:/Users/minih/anaconda3/envs/optfit/data"?
+FATAL:  lock file "postmaster.pid" already exists
+HINT:  Is another postmaster (PID 43276) running in data directory "C:/Users/minih/anaconda3/envs/optfit/data"?
