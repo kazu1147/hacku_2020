@@ -12,3 +12,12 @@ FATAL:  lock file "postmaster.pid" already exists
 HINT:  Is another postmaster (PID 43276) running in data directory "C:/Users/minih/anaconda3/envs/optfit/data"?
 FATAL:  lock file "postmaster.pid" already exists
 HINT:  Is another postmaster (PID 43276) running in data directory "C:/Users/minih/anaconda3/envs/optfit/data"?
+FATAL:  lock file "postmaster.pid" already exists
+HINT:  Is another postmaster (PID 6472) running in data directory "C:/Users/minih/anaconda3/envs/optfit/data"?
+LOG:  database system was interrupted; last known up at 2020-10-19 16:08:22 JST
+LOG:  database system was not properly shut down; automatic recovery in progress
+LOG:  invalid record length at 0/2F98ECC0: wanted 24, got 0
+LOG:  redo is not required
+LOG:  MultiXact member wraparound protections are now enabled
+LOG:  database system is ready to accept connections
+LOG:  autovacuum launcher started

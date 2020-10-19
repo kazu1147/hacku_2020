@@ -1,0 +1,24 @@
+・https://www.python.org/downloads/からダウンロード
+python==3.7.1
+
+・セットアップ 一番下のpath追加にチェックを入れて
+-恐らく上手くいかない
+-where pythonを実行してもらう
+->ダウンロードしたpythonのパス優先度を上げる。
+
+・環境の作成
+-mkdir djangoenvs
+-python -m venv hackuvenv
+
+・環境内にアクセス(activate.exeを叩く)
+-hackuvenv\Scripts\activate
+
+・pip install -r requirements.txt(配布)
+
+・pycharmインストール
+
+・プロジェクト設定からScripts以下のpython.exeを通す
+
+・あとはdbの用意(postgres)
+-postgres9.6.6ダウンロード(https://eng-entrance.com/postgresql-download-install)
+-環境パスを通す
