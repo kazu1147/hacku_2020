@@ -1,13 +1,27 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-    {% for spot in spots %}
-        {{ spot }}
-        <br>
-    {% endfor %}
-</body>
-</html>
+{% extends "base.html" %}
+
+{% comment %}
+/*　トップページ用のHTMLファイル */
+"block content"以下にhtmlを記述
+{% endcomment %}
+
+{% block content %}
+    <div>
+        {% for spot in spots %}
+            {{ spot }}
+            <br>
+        {% endfor %}
+    </div>
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+

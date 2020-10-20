@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% comment %}
+/*　トップページ用のHTMLファイル */
+"block content"以下にhtmlを記述
+{% endcomment %}
+
+{% block content %}
+    <div>
+        <input type="button" id="evaluation_button" value="いいね!">
+    </div>
+
+<script>
+    /* 評価ボタン押下時に評価を1加算する関数の定義(非同期処理) */
+    $('#evaluation_button').on('click', function(){
+        console.log("いいねボタンのクリック!")
+        let url = "{% url 'map:plus_fab' 1 %}".replace('1', "{{ id }}")
+        console.log(url)
+
+        /*非同期で欠席者リストを更新*/
+        $.ajax({
+            url: url,
+            type: "GET",
+            dataType: "json"
+        })
+        /*通信成功*/
+        .done(function(data, textStatus, jqXHR){
+              /*レスポンスのJSONを取得*/
+              var json = JSON.stringify(data);
+              json =  JSON.parse(json);
+
+              /*削除に成功したら画面遷移*/
+              if(json["status"] == "success"){
+                $('#evaluation_button').prop('disabled', true)
+                alert("このスポットを評価しました！")
+              }else{
+                alert("通信に失敗しました.ネットワーク環境を整えてください.");
+              }
+        })
+        /*通信失敗*/
+        .fail(function(jqXHR, textStatus, errorThrown){
+            alert("通信に失敗しました.ネットワーク環境を整えてください.");
+        });
+    });
+
+
+</script>
+
+{% endblock %}

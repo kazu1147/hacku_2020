@@ -1,16 +1,18 @@
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect
-
+from django.http import Http404, JsonResponse
+from django.shortcuts import render, redirect, get_object_or_404
 
 # Create your views here.
 from map.models import Form
 
 
+# トップページにリダイレクトする関数
 @login_required
 def redirect_top(request):
     return redirect('map:top')
 
 
+# トップページを表示する関数
 @login_required
 def show_top(request):
     # 全てのスポットを取得
@@ -29,6 +31,21 @@ def show_top(request):
     return render(request, 'map/top.html', contexts)
 
 
+# スポットの入力画面を表示する関数
 @login_required
 def show_form(request):
     return render(request, 'map/form.html')
+
+
+# スポットの評価を1増やす関数
+@login_required
+def plus_fab(request, id):
+    try:
+        target_form = get_object_or_404(Form, id=id)
+        target_form.fab_count += 1
+        target_form.save()
+        return JsonResponse({"status": "success"})
+    except Http404:
+        return JsonResponse({"status": "fail"})
+    except Exception:
+        return JsonResponse({"status": "fail"})
