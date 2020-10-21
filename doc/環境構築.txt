@@ -10,8 +10,21 @@ python==3.7.1
 -mkdir djangoenvs
 -python -m venv hackuvenv
 
-・環境内にアクセス(activate.exeを叩く)
+
+-----------------------------------------------------
+
+
+
+
+
+
+
+・環境内にアクセス(activateを叩く)
 -hackuvenv\Scripts\activate
+
+
+
+
 
 ・pip install -r requirements.txt(配布)
 
@@ -20,5 +33,9 @@ python==3.7.1
 ・プロジェクト設定からScripts以下のpython.exeを通す
 
 ・あとはdbの用意(postgres)
--postgres9.6.6ダウンロード(https://eng-entrance.com/postgresql-download-install)
+-postgres9.6.19ダウンロード(https://www.enterprisedb.com/downloads/postgres-postgresql-downloads)
+
+superuser -> パス:postgres
+5433ポート
+
 -環境パスを通す

@@ -26,3 +26,5 @@ HINT:  See C include file "ntstatus.h" for a description of the hexadecimal valu
 LOG:  checkpointer process (PID 16072) was terminated by exception 0xC000013A
 HINT:  See C include file "ntstatus.h" for a description of the hexadecimal value.
 LOG:  terminating any other active server processes
+FATAL:  ロックファイル"postmaster.pid"はすでに存在します
+ヒント:  他のpostmaster(PID 19768)がデータディレクトリ"C:/Users/minih/anaconda3/envs/optfit/data"で稼動していませんか?
