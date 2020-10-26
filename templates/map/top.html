@@ -6,13 +6,62 @@
 {% endcomment %}
 
 {% block content %}
+    <style>
+
+    </style>
     <div>
         {% for spot in spots %}
             {{ spot }}
             <br>
         {% endfor %}
     </div>
+
+    <svg></svg>
+    <script>
+        // 以下にjavascriptの記述を行う(地図周りの処理)
+        var width = 300,
+        height = 300;
+        var scale = 12000;
+        d3.json("../static/jsons/aichi.geojson", createMap);
+
+        function createMap(japan) {
+            //var japan = topojson.feature(japan, japan.objects);
+            var aProjection = d3.geoMercator()
+                                .center([ 137.3, 34.97041])
+                                .translate([width/2, height/2])
+                                .scale(scale);
+            var geoPath = d3.geoPath().projection(aProjection);
+            var svg = d3.select("svg").attr("width",width).attr("height",height);
+
+            console.log(japan.features)
+
+            var city_color_map_list = JSON.parse('{{ covid_area_levels|safe }}')
+            console.log(city_color_map_list)
+            //マップ描画
+            var map = svg.selectAll("path").data(japan.features)
+                .enter()
+                .append("path")
+                .attr("d", geoPath)
+                .style("stroke", "#ffffff")
+                .style("stroke-width", 0.1)
+                .style("fill",function(d,i){
+                    let mapping_flag = false
+                    for (let i=0;i < city_color_map_list.length;i++){
+                        if ((city_color_map_list[i]['city'] == d.properties.N03_003)
+                        || (city_color_map_list[i]['city'] == d.properties.N03_004)){
+                            console.log(city_color_map_list[i]['city'])
+                            mapping_flag = true
+                            return city_color_map_list[i]['color'];
+                        }
+                    }
+                    if(!mapping_flag){
+                        return "#5EAFC6";
+                    }
+                });
+        };
+    </script>
 {% endblock %}
+
 
 
 

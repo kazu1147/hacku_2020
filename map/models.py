@@ -40,3 +40,22 @@ class Form(models.Model):
 
     def __str__(self):
         return f"{self.title}"
+
+
+class Covid_level(models.Model):
+    level_list = [(1, "危険度1"), (2, "危険度2"), (3, "危険度3"), (4, "危険度4"), (5, "危険度5")]
+
+    date = models.DateTimeField(primary_key=True, verbose_name="日付", null=False, blank=False)
+    one = models.IntegerField(choices=level_list, verbose_name="エリア1", null=False, blank=False)
+    two = models.IntegerField(choices=level_list, verbose_name="エリア2", null=False, blank=False)
+    three = models.IntegerField(choices=level_list, verbose_name="エリア3", null=False, blank=False)
+    four = models.IntegerField(choices=level_list, verbose_name="エリア4", null=False, blank=False)
+    five = models.IntegerField(choices=level_list,verbose_name="エリア5", null=False, blank=False)
+    six = models.IntegerField(choices=level_list, verbose_name="エリア6", null=False, blank=False)
+    seven = models.IntegerField(choices=level_list, verbose_name="エリア7", null=False, blank=False)
+    eight = models.IntegerField(choices=level_list, verbose_name="エリア8", null=False, blank=False)
+    nine = models.IntegerField(choices=level_list, verbose_name="エリア9", null=False, blank=False)
+    ten = models.IntegerField(choices=level_list, verbose_name="エリア10", null=False, blank=False)
+    eleven = models.IntegerField(choices=level_list, verbose_name="エリア11", null=False, blank=False)
+    twelve = models.IntegerField(choices=level_list, verbose_name="エリア12", null=False, blank=False)
+    thirteen = models.IntegerField(choices=level_list, verbose_name="エリア13", null=False, blank=False, default=1)

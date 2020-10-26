@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'map',
+    'script',
 ]
 
 MIDDLEWARE = [
@@ -84,7 +85,7 @@ DATABASES = {
         'USER': conf['db']['user'],
         'PASSWORD': conf['db']['pass'],
         'HOST': conf['db']['host'],
-        'PORT': '5432',
+        'PORT': 5433,
     }
 }
 
