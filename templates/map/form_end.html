@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% comment %}
+/*　投稿完了のHTMLファイル */
+"block content"以下にhtmlを記述
+{% endcomment %}
+
+{% block content %}
+    <style>
+        .title_area{
+            text-align: center;
+        }
+    </style>
+
+
+    <div class="end">
+        <div class="title_area">
+            <h2>投稿が完了しました.</h2>
+        </div>
+        <div class="text_area">
+            <p>投稿内容を確認するには <a href="{% url 'map:form_detail' spot_id%}">こちら</a>
+                を押してください</p>
+        </div>
+        <div class="button_area">
+            <a href="{% url 'map:top'%}">
+                <button class='register_button'>トップページへ戻る</button>
+            </a>
+        </div>
+    </div>
+
+{% endblock %}

@@ -6,15 +6,157 @@
     <head>
         {% load static %}
         <meta charset="utf-8">
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.1/css/bootstrap.css" rel="stylesheet">
+        <link href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css?family=Roboto+Condensed:700" rel="stylesheet">
+        <link href="{% static 'css/base.css'　%}" rel="stylesheet">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.js"></script>
+        <script src="https://getbootstrap.com/docs/4.1/assets/js/vendor/popper.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.1/js/bootstrap.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.12.0/d3.min.js" type="text/JavaScript"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/1.6.20/topojson.min.js"></script>
+        <link rel="shortcut icon" href="{% static 'images/favicon.ico' %}">
         <title>VelDuce</title>
     </head>
 
     <body>
-        <main>
-            {% block content %}{% endblock %}
-        </main>
+        <div class="page-wrapper chiller-theme toggled">
+          <a id="show-sidebar" class="btn btn-sm btn-dark" href="#">
+            <i class="fas fa-bars"></i>
+          </a>
+          <nav id="sidebar" class="sidebar-wrapper">
+            <div class="sidebar-content">
+              <div class="sidebar-brand">
+                <a href="#">VelDuce</a>
+                <div id="close-sidebar">
+                  <i class="fas fa-bars"></i>
+                </div>
+              </div>
+              <div class="sidebar-header">
+                <div class="user-pic">
+                  <img class="img-responsive img-rounded" src="{% static 'images/rabit.jpg' %}" alt="User picture">
+                </div>
+                <div class="user-info">
+                  <span class="user-name">
+                    <strong>{{ user.username }}</strong>
+                  </span>
+                  <span class="user-status">
+                    <i class="fa fa-circle"></i>
+                    <span>Online</span>
+                  </span>
+                </div>
+              </div>
+              <!-- sidebar-header  -->
+              <div class="sidebar-search">
+                <div>
+                  <div class="input-group">
+                    <input type="text" class="form-control search-menu" placeholder="Search...">
+                    <div class="input-group-append">
+                      <span class="input-group-text">
+                        <i class="fa fa-search" aria-hidden="true"></i>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- sidebar-search  -->
+              <div class="sidebar-menu">
+                <ul>
+                  <li class="sidebar-dropdown">
+                    <a href="{% url 'map:top' %}">
+                      <i class="fa fa-child"></i>
+                      <span>ダッシュボード</span>
+                    </a>
+                  </li>
+                  <li class="sidebar-dropdown">
+                    <a href="{% url 'map:form' %}">
+                      <i class="fa fa-book"></i>
+                      <span>スポット投稿</span>
+                    </a>
+                  </li>
+                  <li class="sidebar-dropdown">
+                    <a href="{% url 'map:route' %}">
+                      <i class="fa fa-briefcase"></i>
+                      <span>旅行プラン作成</span>
+                    </a>
+                  </li>
+                  <li class="sidebar-dropdown">
+                    <a href="#">
+                      <i class="fa fa-chart-line"></i>
+                      <span>感染状況分析</span>
+                    </a>
+                  </li>
+                  <li class="sidebar-dropdown">
+                    <a href="#">
+                      <i class="fa fa-cog "></i>
+                      <span>ヘルプ</span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+              <!-- sidebar-menu  -->
+            </div>
+            <!-- sidebar-content  -->
+            <div class="sidebar-footer">
+              <a href="#">
+                <i class="fa fa-bell"></i>
+                <span class="badge badge-pill badge-warning notification" >3</span>
+              </a>
+              <a href="#">
+                <i class="fa fa-envelope"></i>
+                <span class="badge badge-pill badge-success notification">7</span>
+              </a>
+              <a href="/accounts/logout/" id="a_logout">
+                <i class="fa fa-user-times"></i>
+              </a>
+            </div>
+          </nav>
+          <!-- sidebar-wrapper  -->
+          <main class="page-content">
+              {% block content %}{% endblock %}
+          </main>
+          <!-- page-content" -->
+        </div>
+        <!-- page-wrapper -->
     </body>
+
+    <script>
+      $(".sidebar-dropdown > a").click(function() {
+        $(".sidebar-submenu").slideUp(200);
+        if (
+          $(this)
+            .parent()
+            .hasClass("active")
+        ) {
+          $(".sidebar-dropdown").removeClass("active");
+          $(this)
+            .parent()
+            .removeClass("active");
+        } else {
+          $(".sidebar-dropdown").removeClass("active");
+          $(this)
+            .next(".sidebar-submenu")
+            .slideDown(200);
+          $(this)
+            .parent()
+            .addClass("active");
+        }
+      });
+
+      $("#close-sidebar").click(function() {
+        $(".page-wrapper").removeClass("toggled");
+      });
+      $("#show-sidebar").click(function() {
+        $(".page-wrapper").addClass("toggled");
+      });
+
+      /* ログアウト処理 */
+      $('#a_logout').click(function(){
+          var result = window.confirm('ログアウトしますか?');
+          if( result ) {
+              return true
+          }
+          return false;
+      });
+    </script>
 </html>

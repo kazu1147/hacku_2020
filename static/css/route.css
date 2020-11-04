@@ -1,0 +1,84 @@
+table{
+  border-collapse: collapse;
+  border-spacing: 0;
+  width: 100%;
+}
+
+table tr{
+  border-bottom: solid 1px #eee;
+  cursor: pointer;
+}
+
+.tr_boader{
+    border-bottom: double 8px #eee;
+}
+
+table tr:hover{
+  background-color: #d4f0fd;
+}
+
+table th,table td{
+  text-align: center;
+  width: 25%;
+  padding: 15px 0;
+}
+
+
+table td.icon.bird{
+  background-image: url(icon-bird.png)
+}
+
+table td.icon.whale{
+  background-image: url(icon-whale.png)
+}
+
+table td.icon.crab{
+  background-image: url(icon-crab.png)
+}
+
+.form_area{
+
+}
+
+
+.sub1 {
+
+    width: 60%
+}
+
+.sub2 {
+
+    width: 40%
+}
+
+.box1 {
+  padding: 15px 20px;
+}
+
+.box2 {
+    padding: 15px 20px;
+}
+
+.root-page{
+    text-align:left;
+}
+
+/* flexbox設定 */
+.flex-container {
+  display: flex;
+  justify-content: space-around;
+}
+
+.button_area{
+    margin-top: 20px;
+    text-align: center;
+}
+
+.table-scroll{
+    overflow: scroll;
+    height: 16em;
+}
+
+.selected-group-item{
+    text-align: center;
+}

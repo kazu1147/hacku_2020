@@ -28,3 +28,37 @@ HINT:  See C include file "ntstatus.h" for a description of the hexadecimal valu
 LOG:  terminating any other active server processes
 FATAL:  ロックファイル"postmaster.pid"はすでに存在します
 ヒント:  他のpostmaster(PID 19768)がデータディレクトリ"C:/Users/minih/anaconda3/envs/optfit/data"で稼動していませんか?
+LOG:  データベースシステムは中断されました: 今回は 2020-10-28 09:56:50 JST までは到達しています
+LOG:  データベースシステムは適切にシャットダウンされませんでした。自動リカバリを行っています
+LOG:  0/3A67E840のレコード長が無効です:長さは24である必要がありますが、長さは0でした
+LOG:  REDOは必要ありません
+LOG:  MultiXact member wraparound protections are now enabled
+LOG:  データベースシステムの接続受付準備が整いました。
+LOG:  自動バキュームランチャプロセス
+ERROR:  ユーザからの要求により文をキャンセルしています
+LOG:  高速シャットダウン要求を受け取りました
+LOG:  活動中の全トランザクションをアボートしています
+LOG:  自動バキュームランチャを停止しています
+LOG:  シャットダウンしています
+LOG:  データベースシステムはシャットダウンしました
+LOG:  データベースシステムは 2020-10-28 21:01:39 JST にシャットダウンしました
+LOG:  MultiXact member wraparound protections are now enabled
+LOG:  データベースシステムの接続受付準備が整いました。
+LOG:  自動バキュームランチャプロセス
+LOG:  高速シャットダウン要求を受け取りました
+LOG:  活動中の全トランザクションをアボートしています
+LOG:  自動バキュームランチャを停止しています
+ERROR:  ユーザからの要求により文をキャンセルしています
+LOG:  自動バキュームランチャを停止しています
+LOG:  シャットダウンしています
+LOG:  データベースシステムはシャットダウンしました
+LOG:  データベースシステムは 2020-10-28 22:53:15 JST にシャットダウンしました
+LOG:  MultiXact member wraparound protections are now enabled
+LOG:  データベースシステムの接続受付準備が整いました。
+LOG:  自動バキュームランチャプロセス
+LOG:  統計情報収集プロセス (PID 33004)は例外C000013Aで終了しました
+ヒント:  16進値の説明についてはC インクルードファイル"ntstatus.h"を参照してください。
+FATAL:  ロックファイル"postmaster.pid"はすでに存在します
+ヒント:  他のpostmaster(PID 26916)がデータディレクトリ"C:/Users/minih/anaconda3/envs/optfit/data"で稼動していませんか?
+FATAL:  ロックファイル"postmaster.pid"はすでに存在します
+ヒント:  他のpostmaster(PID 26916)がデータディレクトリ"C:/Users/minih/anaconda3/envs/optfit/data"で稼動していませんか?

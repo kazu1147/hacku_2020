@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    {% comment %}以下の要領でスポットデータが取得できます！{% endcomment %}
+    <h1>スポット詳細:</h1>
+    {{ spot.id }}<br>
+    <h2>タイトル:</h2>
+    <p>{{ spot.title }}</p>
+    <h3>タグ:</h3>
+    <p>{{spot.tag}}</p>
+    <h4>住所:</h4>   
+    <p>{{spot.address}}</p>
+    <h5>テキスト:</h5>
+    <p>{{spot.text}}</p>
+    <p><img src="spot.image_url" alt="画像"></p>
+    
+    <div>
+        <input type="button" id="evaluation_button" value="いいね!">
+    </div>
+    <br>
+    <script>
+    /* 評価ボタン押下時に評価を1加算する関数の定義(非同期処理) */
+    $('#evaluation_button').on('click', function(){
+        console.log("いいねボタンのクリック!")
+        let url = "{% url 'map:plus_fab' 1 %}".replace('1', "{{ id }}")
+        console.log(url)
+
+        /*非同期で欠席者リストを更新*/
+        $.ajax({
+            url: url,
+            type: "GET",
+            dataType: "json"
+        })
+        /*通信成功*/
+        .done(function(data, textStatus, jqXHR){
+              /*レスポンスのJSONを取得*/
+              var json = JSON.stringify(data);
+              json =  JSON.parse(json);
+
+              /*削除に成功したら画面遷移*/
+              if(json["status"] == "success"){
+                $('#evaluation_button').prop('disabled', true)
+                alert("このスポットを評価しました！")
+              }else{
+                alert("通信に失敗しました.ネットワーク環境を整えてください.");
+              }
+        })
+        /*通信失敗*/
+        .fail(function(jqXHR, textStatus, errorThrown){
+            alert("通信に失敗しました.ネットワーク環境を整えてください.");
+        });
+    });
+
+
+</script>
+</body>                                   
+</html>

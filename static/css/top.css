@@ -1,0 +1,66 @@
+.page-header{
+    text-align:left;
+}
+
+div.loading {
+    display: table;
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: #fff;
+    opacity: 0.8;
+}
+
+.sidebar_menu_point:hover {
+    text-decoration: none;
+}
+img {
+    vertical-align: baseline;
+}
+
+/* flexbox設定 */
+.flex-container {
+    position: relative;
+}
+
+.button_area{
+    margin-top: 20px;
+}
+
+
+.sub1 {
+    width: 100%
+}
+
+.sub2 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.5rem;
+    border-radius: 50%;
+    cursor: pointer;
+    position: absolute;
+    top: 3%;
+    left: 70%;
+    width: 30%
+}
+
+.box1 {
+  padding: 15px 20px;
+}
+
+.box2 {
+    padding: 15px 20px;
+}
+
+.map_svg{
+    border-top: solid 5px #000;
+    border-bottom: solid 5px #000;
+    border-right: solid 5px #000;
+    border-left: solid 5px #000;
+    background-color:#FFFFFF;
+}
+
+

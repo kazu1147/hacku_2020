@@ -1,0 +1,409 @@
+{% extends "base.html" %}
+
+{% comment %}
+/*　トップページ用のHTMLファイル */
+"block content"以下にhtmlを記述
+{% endcomment %}
+
+{% block content %}
+    {% load static %}
+    <script src="https://maps.google.com/maps/api/js?key=AIzaSyDSsbSMT-6VZNlcfkMQ9n1Nf1UBjCp_lFo&callback=initMap" async defer></script>
+    <link href="{% static 'css/route.css'　%}" rel="stylesheet">
+
+
+    <!--　最短経路検索用フォーム 部品　-->
+    <div class="root-page">
+        <div class="page-header">
+            <h1>旅行プラン作成</h1>
+        </div>
+
+        <div class="flex-container">
+            <div class="sub1">
+                <div class="box1">
+                   <div class="map_canvas" id="map_canvas" style="width:80%;height:500px"></div>
+                </div>
+            </div>
+            <div class="sub2">
+                <div class="box2">
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="form_area">
+                            <table class="header_table">
+                                <tr>
+                                    <th>
+                                        スポット数
+                                    </th>
+                                    <td class="icon bird">
+                                        <select name="numberspot" id="numberspot">
+                                            <option value="1">1</option>
+                                            <option value="2">2</option>
+                                            <option value="3">3</option>
+                                            <option value="4">4</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr class="tr_boader">
+                                    <th>移動手段</th>
+                                    <td class="icon bird">
+                                        <select name="method" id="select_moving">
+                                            <option value="自転車">自転車</option>
+                                            <option value="車">車</option>
+                                            <option value="電車">電車</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                            </table>
+                            <div class="table-scroll tr_boader">
+                                <table>
+                                    <tr id="spot1" class="form_area">
+                                        <th>タグ</th>
+                                        <td class="icon bird">
+                                            <div class="selected-group-item">
+                                                <select class="spot_tag_select" id="spot_tag_1">
+                                                    <option value="-1" selected>指定なし</option>
+                                                    {% for tag in tag_list %}
+                                                        <option value="{{tag.pk}}">{{tag.name}}</option>
+                                                    {% endfor %}
+                                                </select>
+                                                <input type="checkbox" id="button_check_1" class="group-checkbox" >
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr id="tr_1">
+                                        <th id="th_1">目的地</th>
+                                        <td id="tag_title_1">
+
+                                        </td>
+                                    </tr>
+                                    <tr id="spot2" class="form_area">
+                                        <th>タグ</th>
+                                        <td class="icon bird">
+                                            <div class="selected-group-item">
+                                                <select class="spot_tag_select" id="spot_tag_2">
+                                                    <option value="-1" selected>指定なし</option>
+                                                    {% for tag in tag_list %}
+                                                        <option value="{{tag.pk}}">{{tag.name}}</option>
+                                                    {% endfor %}
+                                                </select>
+                                                <input type="checkbox" id="button_check_2" class="group-checkbox" >
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr id="tr_2">
+                                        <th id="th_2">目的地</th>
+                                        <td id="tag_title_2">
+
+                                        </td>
+                                    </tr>
+                                    <tr id="spot3" class="form_area">
+                                        <th>タグ</th>
+                                        <td class="icon bird">
+                                            <div class="selected-group-item">
+                                                <select class="spot_tag_select" id="spot_tag_3">
+                                                    <option value="-1" selected>指定なし</option>
+                                                    {% for tag in tag_list %}
+                                                        <option value="{{tag.pk}}">{{tag.name}}</option>
+                                                    {% endfor %}
+                                                </select>
+                                                <input type="checkbox" id="button_check_3" class="group-checkbox" >
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr id="tr_3">
+                                        <th id="th_3">目的地</th>
+                                        <td id="tag_title_3">
+
+                                        </td>
+                                    </tr>
+                                    <tr id="spot4" class="form_area">
+                                        <th>タグ</th>
+                                        <td class="icon bird">
+                                            <div class="selected-group-item">
+                                                <select class="spot_tag_select" id="spot_tag_4">
+                                                    <option value="-1" selected>指定なし</option>
+                                                    {% for tag in tag_list %}
+                                                        <option value="{{tag.pk}}">{{tag.name}}</option>
+                                                    {% endfor %}
+                                                </select>
+                                                <input type="checkbox" id="button_check_4" class="group-checkbox" >
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr id="tr_4">
+                                        <th id="th_4">目的地</th>
+                                        <td id="tag_title_4">
+
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="button_area">
+                                <input type="button" value="決定">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        var map
+        var location_infos = new Array();
+        function initMap() {
+            // *　＜＜＜決定が押されたときに実行。＞＞＞/ 経路のテキストも表示(route内に表示)
+
+            // ルート検索の条件 *ここにフォームに入力された内容を反映する。フォーム数に応じて経由地数を変更。交通手段もフォームに応じて変更。 緯度経度をデータベースから取ってきて処理！？
+            var request = {
+                origin: new google.maps.LatLng(35.681382,139.766084), // 出発地
+                destination: new google.maps.LatLng(34.73348,135.500109), // 目的地
+                waypoints: [ // 経由地点
+                    { location: new google.maps.LatLng(35.630152,139.74044) },
+                    { location: new google.maps.LatLng(35.507456,139.617585) },
+                ],
+                optimizeWaypoints: true, //最適化
+                travelMode: google.maps.DirectionsTravelMode.WALKING, // 交通手段
+            };
+
+            // マップの生成
+            map_canvas();
+
+            var d = new google.maps.DirectionsService(); // ルート検索オブジェクト
+            var r = new google.maps.DirectionsRenderer({ // ルート描画オブジェクト
+                map: map, // 描画先の地図
+                preserveViewport: true, // 描画後に中心点をずらさない
+            });
+
+            // ルート検索
+            d.route(request, function(result, status){ //google.maps.DirectionsService().route(出発地などの設定情報、google.maps.DirectionsService().status)
+                // OKの場合ルート描画
+                if (status == google.maps.DirectionsStatus.OK) {
+                    r.setDirections(result); //結果を描画する。
+                }
+            });
+        }
+
+        //ピンを立てる
+        function map_canvas(){
+            //マーカーの情報
+            var data = new Array();
+
+             // spot情報の配列
+            var array = {{ spots|safe }}
+
+            console.log(array)
+
+            var lating = new google.maps.LatLng(array[0].location__lat,array[0].location__lon);
+            var opts = {
+                zoom: 15,
+                center: lating,
+                mapTypeId: google.maps.MapTypeId.ROADMAP
+            };
+            map = new google.maps.Map(document.getElementById("map_canvas"), opts);
+
+            var markers =new Array();
+            //マーカー を配置するループ
+            for(i = 0; i < array.length ; i++){
+                markers[i] = new google.maps.Marker({
+                    position: new google.maps.LatLng(array[i]['location__lat'], array[i]['location__lon']),
+                    map: map
+                });
+                markerInfo(markers[i], array[i]);
+            }
+        }
+
+        function markerInfo(marker, array){
+            var atext="<a href='/form/{0}/'>詳細</a>".format(array.id)
+
+            /* urlを取得 */
+
+            /* imgタグの用意(srcにurlを組み込む)*/
+
+            /* 表示スタイルの作成 */
+            var name = "{0}<br>{1}<br>{2}".format(array.title, array.description, atext)
+
+            google.maps.event.addListener(marker, 'mouseover', function(event) {
+                new google.maps.InfoWindow({
+                    content: name
+                }).open(marker.getMap(), marker);
+            });
+        }
+
+        var csrf_token = getCookie("csrftoken");
+        // htmlが読み込まれたタイミングで実行
+        $(function(){
+            //スポット数(numberspot)に値が与えられたとき(選択されたとき)、<tr>タグのspot1～4を値に合わせて表示・非表示する。
+
+            document.getElementById('spot2').style.display = "none";
+            document.getElementById('tr_2').style.display = "none";
+            document.getElementById('spot3').style.display = "none";
+            document.getElementById('tr_3').style.display = "none";
+            document.getElementById('spot4').style.display = "none";
+            document.getElementById('tr_4').style.display = "none";
+
+            var select = document.getElementById('numberspot');
+
+            select.onchange = function(){
+                if(this.value == "1"){
+                    document.getElementById('spot1').style.display = "";
+                    document.getElementById('tr_1').style.display = "";
+                    document.getElementById('tr_2').style.display = "none";
+                    document.getElementById('tr_3').style.display = "none";
+                    document.getElementById('tr_4').style.display = "none";
+                    document.getElementById('spot2').style.display = "none";
+                    document.getElementById('spot3').style.display = "none";
+                    document.getElementById('spot4').style.display = "none";
+                    $('#th_1').text("目的地")
+                    $('#th_2').text("目的地")
+                    $('#th_3').text("目的地")
+                    $('#th_4').text("目的地")
+
+                }
+                else if(this.value == "2"){
+                    document.getElementById('spot1').style.display = "";
+                    document.getElementById('spot2').style.display = "";
+                    document.getElementById('tr_1').style.display = "";
+                    document.getElementById('tr_2').style.display = "";
+                    document.getElementById('tr_3').style.display = "none";
+                    document.getElementById('tr_4').style.display = "none";
+                    document.getElementById('spot3').style.display = "none";
+                    document.getElementById('spot4').style.display = "none";
+                    $('#th_1').text("経由地1")
+                    $('#th_2').text("目的地")
+                    $('#th_3').text("目的地")
+                    $('#th_4').text("目的地")
+                }
+                else if(this.value == "3"){
+                    document.getElementById('spot1').style.display = "";
+                    document.getElementById('spot2').style.display = "";
+                    document.getElementById('spot3').style.display = "";
+                    document.getElementById('tr_1').style.display = "";
+                    document.getElementById('tr_2').style.display = "";
+                    document.getElementById('tr_3').style.display = "";
+                    document.getElementById('tr_4').style.display = "none";
+                    document.getElementById('spot4').style.display = "none";
+                    $('#th_2').text("経由地2")
+                    $('#th_1').text("経由地1")
+                    $('#th_3').text("目的地")
+                    $('#th_4').text("目的地")
+                }
+                else if(this.value == "4"){
+                    document.getElementById('spot1').style.display = "";
+                    document.getElementById('spot2').style.display = "";
+                    document.getElementById('spot3').style.display = "";
+                    document.getElementById('spot4').style.display = "";
+                    document.getElementById('tr_1').style.display = "";
+                    document.getElementById('tr_2').style.display = "";
+                    document.getElementById('tr_3').style.display = "";
+                    document.getElementById('tr_4').style.display = "";
+                    $('#th_3').text("経由地3")
+                    $('#th_1').text("経由地1")
+                    $('#th_2').text("経由地2")
+                    $('#th_4').text("目的地")
+                }
+            }
+
+            /* チェックイベントを作成*/
+            for (let i=1;i < 5;i++){
+                $('#button_check_' + i).on('click', function(){
+                    let check = $(this).prop('checked');
+                    if (check){
+                        set_check_event(i); // 非同期処理実行
+                    }else{
+                        reset_form(i);
+                    }
+                })
+            }
+        });
+
+        /* タグからスポットを検索し、返す関数 */
+        function set_check_event(i){
+            let jsonForm = new FormData();
+            jsonForm.append('tag', $('#spot_tag_' + i).val())
+            jsonForm.append('moving', $('#select_moving').val())
+
+            // 非同期処理準備
+            $.ajaxSetup({
+                beforeSend: function(xhr, settings) {
+                    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", csrf_token);
+                    }
+                }
+            });
+
+             /*非同期で欠席者リストを更新*/
+            $.ajax({
+                url  : "{% url 'map:search_spot' %}",
+                type : "POST",
+                'data': jsonForm,
+                cache       : false,
+                contentType : false,
+                processData : false,
+                dataType    : "json"
+            })
+            /*通信成功*/
+            .done(function(data, textStatus, jqXHR){
+                  /*レスポンスのJSONを取得*/
+                  var json = JSON.stringify(data);
+                  json =  JSON.parse(json);
+
+                  /*削除に成功したら画面遷移*/
+                  if(json["status"] == "OK"){
+                      console.log(json)
+                      let tag_id = json["spot"]["tag__id"]
+                      let title = json["spot"]["title"]
+                      location_infos.push({'lat': json["spot"]["location__lat"], 'lng': json["spot"]["location__lon"]})
+                      console.log(location_infos)
+                      $('#spot_tag_' + i).val(tag_id)
+                      $('#tag_title_' + i).text(title)
+                  }else{
+                      alert(json["error"])
+                  }
+            })
+            /*通信失敗*/
+            .fail(function(jqXHR, textStatus, errorThrown){
+                alert("通信に失敗しました.ネットワーク環境を整えてください.");
+            });
+        }
+
+        /* 選択内容のリセット*/
+        function reset_form(i){
+            $('#spot_tag_' + i).val("-1")
+            $('#tag_title_' + i).text("")
+        }
+
+        /* csrf_tokenの取得 */
+        function getCookie(name) {
+            var cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                var cookies = document.cookie.split(';');
+                for (var i = 0; i < cookies.length; i++) {
+                    var cookie = jQuery.trim(cookies[i]);
+                    // Does this cookie string begin with the name we want?
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        // csrfトークンが必要かどうかの検証
+        function csrfSafeMethod(method) {
+            // these HTTP methods do not require CSRF protection
+            return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+        }
+
+        (function(){
+            if (!String.prototype.format) {
+                String.prototype.format = function () {
+                    var args = arguments;
+                    return this.replace(/{(\d+)}/g, function (match, number) {
+                        return typeof args[number] != 'undefined'? args[number]: match;
+                    });
+                };
+            }
+        })();
+    </script>
+
+{% endblock %}

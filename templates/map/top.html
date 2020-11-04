@@ -6,59 +6,172 @@
 {% endcomment %}
 
 {% block content %}
-    <style>
+    {% load static %}
+    <link href="{% static 'css/top.css'　%}" rel="stylesheet">
+    <script src="https://maps.google.com/maps/api/js?key=AIzaSyDSsbSMT-6VZNlcfkMQ9n1Nf1UBjCp_lFo"></script>
 
+    <style>
+        div.loadingMsg{
+            display: table-cell;
+            text-align: center;
+            vertical-align: middle;
+            padding-top: 140px;
+            background: url("{% static 'images/loading.gif' %}") center center no-repeat;
+        }
     </style>
-    <div>
+
+    <div class="page-console" id="content">
+        <div class="page-header">
+            <h1>ダッシュボード</h1>
+        </div>
+
+        <div class="flex-container">
+            <div class="sub1">
+                <div class="box1">
+                    <div class="map_canvas" id="map_canvas" style="width:100%;height:500px"></div>
+                </div>
+            </div>
+            <div class="sub2">
+                <div class="box2">
+                    <svg class="map_svg"></svg>
+                </div>
+            </div>
+        </div>
+
+
+
         {% for spot in spots %}
             {{ spot }}
             <br>
         {% endfor %}
     </div>
 
-    <svg></svg>
+
     <script>
-        // 以下にjavascriptの記述を行う(地図周りの処理)
-        var width = 300,
-        height = 300;
-        var scale = 12000;
-        d3.json("../static/jsons/aichi.geojson", createMap);
+        // 画面表示メッセージ
+        var dispMsg = "<div class='loadingMsg' >準備中です...</div>";
+        // ローディング画像が表示されていない場合のみ出力
+        if($("#loading").length == 0){
+            $("body").append("<div class='loading' id='loading'>" + dispMsg + "</div>");
+        }
 
-        function createMap(japan) {
-            //var japan = topojson.feature(japan, japan.objects);
-            var aProjection = d3.geoMercator()
-                                .center([ 137.3, 34.97041])
-                                .translate([width/2, height/2])
-                                .scale(scale);
-            var geoPath = d3.geoPath().projection(aProjection);
-            var svg = d3.select("svg").attr("width",width).attr("height",height);
+        //地図描画を実行
+        google.maps.event.addDomListener(window,'load', map_canvas);
 
-            console.log(japan.features)
+        // htmlが読み込まれたタイミングで実行
+        $(function(){
+            // 以下にjavascriptの記述を行う(地図周りの処理)
+            var width = 180,
+            height = 180;
+            var scale = 8000;
+            d3.json("../static/jsons/aichi.geojson", createMap);
+            function createMap(japan) {
+                //var japan = topojson.feature(japan, japan.objects);
+                var aProjection = d3.geoMercator()
+                                    .center([ 137.3, 34.97041])
+                                    .translate([width/2, height/2])
+                                    .scale(scale);
+                var geoPath = d3.geoPath().projection(aProjection);
+                var svg = d3.select("svg").attr("width",width).attr("height",height);
 
-            var city_color_map_list = JSON.parse('{{ covid_area_levels|safe }}')
-            console.log(city_color_map_list)
-            //マップ描画
-            var map = svg.selectAll("path").data(japan.features)
-                .enter()
-                .append("path")
-                .attr("d", geoPath)
-                .style("stroke", "#ffffff")
-                .style("stroke-width", 0.1)
-                .style("fill",function(d,i){
-                    let mapping_flag = false
-                    for (let i=0;i < city_color_map_list.length;i++){
-                        if ((city_color_map_list[i]['city'] == d.properties.N03_003)
-                        || (city_color_map_list[i]['city'] == d.properties.N03_004)){
-                            console.log(city_color_map_list[i]['city'])
-                            mapping_flag = true
-                            return city_color_map_list[i]['color'];
+                var city_color_map_list = JSON.parse('{{ covid_area_levels|safe }}')
+
+                //マップ描画
+                var map = svg.selectAll("path").data(japan.features)
+                    .enter()
+                    .append("path")
+                    .attr("d", geoPath)
+                    .style("stroke", "#000000")
+                    .style("stroke-width", 0.1)
+                    .style("fill",function(d,i){
+                        if (city_color_map_list == null){
+                            return "#5EAFC6";
                         }
-                    }
-                    if(!mapping_flag){
-                        return "#5EAFC6";
-                    }
+                        let mapping_flag = false
+                        for (let i=0;i < city_color_map_list.length;i++){
+                            if ((city_color_map_list[i]['city'] == d.properties.N03_003)
+                            || (city_color_map_list[i]['city'] == d.properties.N03_004)){
+                                mapping_flag = true
+                                return city_color_map_list[i]['color'];
+                            }
+                        }
+                        if(!mapping_flag){
+                            return "#5EAFC6";
+                        }
+                    });
+
+                jQuery(svg).ready(function() {
+                    $('#loading').remove();
                 });
-        };
+            };
+        });
+
+        //ピンを立てる
+        function map_canvas(){
+            //マーカーの情報
+            var data = new Array();
+
+             // spot情報の配列
+            var array = {{ spots|safe }}
+            /*
+            data.push({
+                lat:'35.319933', lng:'139.487519',
+                name:'名城大', content: '名城大<br />迷子にならないように！<br><input type="button" onclick="location.href='./index.html'" value="遷移">' });
+            data.push({
+                lat:'35.322291', lng:'139.493211',
+                name:'ナガシマスパーランド', content: 'ナガシマスパーランド<br />迷子にならないように！' });
+            data.push({
+                lat:'35.299129', lng:'139.482337',
+                name:'名古屋港水族館', content: '名古屋港水族館<br />迷子にならないように！'});
+            */
+
+            var lating = new google.maps.LatLng(array[0].location__lat,array[0].location__lon);
+            var opts = {
+                zoom: 15,
+                center: lating,
+                mapTypeId: google.maps.MapTypeId.ROADMAP
+            };
+            var map = new google.maps.Map(document.getElementById("map_canvas"), opts);
+
+            var markers =new Array();
+            //マーカー を配置するループ
+            for(i = 0; i < array.length ; i++){
+                markers[i] = new google.maps.Marker({
+                    position: new google.maps.LatLng(array[i]['location__lat'], array[i]['location__lon']),
+                    map: map
+                });
+                markerInfo(markers[i], array[i]);
+            }
+        }
+
+        function markerInfo(marker, array){
+            var atext="<a href='/form/{0}/'>詳細</a>".format(array.id)
+
+            /* urlを取得 */
+
+            /* imgタグの用意(srcにurlを組み込む)*/
+
+            /* 表示スタイルの作成 */
+            var name = "{0}<br>{1}<br>{2}".format(array.title, array.description, atext)
+
+            google.maps.event.addListener(marker, 'mouseover', function(event) {
+                new google.maps.InfoWindow({
+                    content: name
+                }).open(marker.getMap(), marker);
+            });
+        }
+
+        (function(){
+            if (!String.prototype.format) {
+                String.prototype.format = function () {
+                    var args = arguments;
+                    return this.replace(/{(\d+)}/g, function (match, number) {
+                        return typeof args[number] != 'undefined'? args[number]: match;
+                    });
+                };
+            }
+        })();
+
     </script>
 {% endblock %}
 

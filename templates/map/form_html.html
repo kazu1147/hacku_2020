@@ -1,0 +1,167 @@
+{% extends "base.html" %}
+
+{% comment %}
+/*　トップページ用のHTMLファイル */
+"block content"以下にhtmlを記述
+{% endcomment %}
+
+{% block content %}
+<!-- firebase準備 (ここから) -->
+<!-- The core Firebase JS SDK is always required and must be listed first -->
+<script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-app.js"></script>
+
+<!-- TODO: Add SDKs for Firebase products that you want to use
+         https://firebase.google.com/docs/web/setup#available-libraries -->
+
+<script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-analytics.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-storage.js"></script>
+
+{% load static %}
+<link href="{% static 'css/style.css'　%}" rel="stylesheet">
+
+<div id="content">
+    <div class="spot_input_page">
+        <div class="page-header" >
+            <h2>スポット投稿ページ</h2>
+        </div>
+        <div class="form_area">
+            <form class="spot_input_area" id="spot_input_area" method="post">
+                <div class="flex-container">
+                    <div class="sub1">
+                        <div class="box1">
+                            <div class="spot spot_title">
+                                <label>タイトル:</label>
+                                <input id="input_title" type="text" name="input_title" required>
+                            </div>
+
+                            <div class="spot spot_description">
+                                <label>概要:</label>
+                                <textarea id="input_description" rows="2" cols="40" name="input_text" required></textarea>
+                            </div>
+
+                            <div class="spot spot_tag">
+                                <label>タグ:</label>
+                                <select id="input_tag" name="input_tag" required>
+                                    <option value="-1" selected>選択してください</option>
+                                    {% for tag in search_tags %}
+                                        <option value="{{tag.pk}}">{{tag.name}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="spot spot_address">
+                                <label>住所:</label>
+                                <input id="input_address" type="text" name="input_address" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="sub2">
+                        <div class="box2">
+                            <div class="spot spot_image">
+                                <label>見出し画像:</label>
+                                <div class="a">
+                                    <img id="img" width="100%" height="275px">
+                                    <label class="box" id="file_label" style="text-align: center;">
+                                        <span class="filelabel" title="ファイルを選択" >
+                                            <i class="fa fa-upload fa-3x"></i>
+                                            <div class="file-title">
+                                                ファイルを選択
+                                            </div>
+                                        </span>
+                                        <!-- ▽本来の選択フォームは隠す -->
+                                        <input type="file" name="datafile" id="inputfile" hidden>
+                                        <input type="text" id="file_path" name="file_path" hidden>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% csrf_token %}
+                <div class="box3">
+                    <div class="spot spot_text">
+                        <label>テキスト:</label>
+                        <textarea id="input_text" rows="6" cols="80" name="input_text" required></textarea>
+                    </div>
+                    <div class="button_area">
+                        <input id="submit_button" value="投稿する" type="submit">
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    // Your web app's Firebase configuration
+    // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+    var firebaseConfig = {
+        apiKey: "AIzaSyAObWt69L-LXRxY0OLeijFiGdi_AnMBV7Y",
+        authDomain: "velduce-e085e.firebaseapp.com",
+        databaseURL: "https://velduce-e085e.firebaseio.com",
+        projectId: "velduce-e085e",
+        storageBucket: "velduce-e085e.appspot.com",
+        messagingSenderId: "838452622314",
+        appId: "1:838452622314:web:ab15fa07e3238531b4f893",
+        measurementId: "G-2Z44BM06MY"
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    firebase.analytics();
+</script>
+<!-- firebase準備 (ここまで) -->
+
+<!-- firebaseアップロード処理の部品 -->
+<!--*変更点：紐づけ用の記録ファイル名を指定するように変更/フォームを送信した際に、記録するように変更/ファイルサイズや画像限定にするように変更 -->
+
+
+
+<script>
+    //ファイルAPIを使ってアップロード & firebaseに記録する。
+
+    var image = document.getElementById('img');
+    var inputfile = document.getElementById('inputfile');
+    var uploadRef
+    var file
+    //fileフォームに変化があったときの処理。 また、eはイベントオブジェクト(イベント発生源の要素＋＠の情報を取得可能 発生源の要素だけならthisもあり！)
+    inputfile.addEventListener("change",function(e){
+
+        //配列"e.target.files"にアップロードしたファイルの情報が格納される。
+        file = e.target.files[0];
+        var extension = file.name.slice((file.name.lastIndexOf('.') - 1 >>> 0) + 2);
+        console.log(extension)
+
+        //アップロードした画像を表示する処理
+        var reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = function() {
+            image.src = reader.result;
+        }
+
+        $('#file_label').attr('hidden', true)
+        //firebaseにデータを記録する処理
+        // firebaseのstorage内の参照を行う。
+        var storageRef = firebase.storage().ref();
+        //ストレージへアップロードするファイルのパスを生成する。
+        uploadRef = storageRef.child('images/'+ '{{file_uuid|safe}}' + '.' + extension);
+
+        // ファイルパスをフォームに組み込む
+        $('#file_path').val('{{file_uuid|safe}}' + '.' + extension)
+    });
+
+    /* 投稿前に呼び出される関数*/
+    $('#spot_input_area').submit(function(){
+        //ストレージへアップロードする
+        uploadRef.put(file).then(function() {
+            console.log('Uploaded a blob or file!');
+        });
+    });
+
+</script>
+
+<!-- firebase内のデータを表示する処理の部品 -->
+
+
+{% endblock %}
